@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maurya FM - Audio Stories</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ================= TOP HEADER ================= -->
+    <header class="top-header">
+        <div class="brand-logo" onclick="switchTab('home')">
+            <span class="brand-maurya">Maurya</span>
+            <span class="brand-fm-box">
+                <span class="brand-fm">FM</span>
+                <!-- Mayur Pankh (Peacock Feather) leaning on 'M' -->
+                <svg class="peacock-feather" viewBox="0 0 64 90" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Feather Stem leaning left on M -->
+                    <path d="M10 85 Q22 50 38 15" stroke="#d4af37" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <!-- Outer Green Fronds -->
+                    <path d="M18 55 C5 30, 25 2, 48 8 C62 12, 58 42, 32 58 Z" fill="#0f9d58" opacity="0.9"/>
+                    <!-- Golden Copper Layer -->
+                    <path d="M24 48 C14 30, 28 10, 44 14 C54 17, 50 38, 32 49 Z" fill="#f4b400"/>
+                    <!-- Turquoise Blue Layer -->
+                    <path d="M28 42 C21 29, 31 15, 42 18 C48 20, 46 35, 33 43 Z" fill="#00acc1"/>
+                    <!-- Deep Royal Blue Eye -->
+                    <ellipse cx="36" cy="29" rx="6" ry="8" transform="rotate(20 36 29)" fill="#1a237e"/>
+                    <ellipse cx="37" cy="27" rx="2.5" ry="3.5" transform="rotate(20 37 27)" fill="#00e5ff"/>
+                </svg>
+            </span>
+        </div>
+
+        <!-- Search 🔎 aur uske thik Right mein Login 👤 Icon -->
+        <div class="header-right">
+            <button class="icon-btn" onclick="openSearch()" title="Search Stories">🔎</button>
+            <button class="icon-btn account-btn" onclick="openLoginModal()" title="Login / Account">
+                <span id="userAvatar">👤</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ================= SEARCH OVERLAY ================= -->
+    <div id="searchView" class="search-overlay hidden">
+        <div class="search-header">
+            <button class="back-btn" onclick="closeSearchAndGoHome()">⬅</button>
+            <input type="text" id="searchInput" placeholder="Story ya category search karein..." oninput="handleSearch()">
+            <button class="clear-btn" onclick="clearSearchInput()">✖</button>
+        </div>
+        <div id="searchSuggestions" class="search-results-list">
+            <!-- Milte-julte story ke naam yahan aayenge -->
+        </div>
+    </div>
+
+    <!-- ================= MAIN CONTENT TABS ================= -->
+    <main id="mainContainer">
+        <!-- 1. HOME TAB -->
+        <section id="homeTab" class="tab-content active">
+            <div id="homeCategoriesContainer"></div>
+        </section>
+
+        <!-- 2. DISCOVER TAB -->
+        <section id="discoverTab" class="tab-content hidden">
+            <h2 class="section-heading">🧭 Discover All Stories</h2>
+            <div class="genre-chips" id="discoverChips"></div>
+            <div id="discoverGrid" class="story-grid"></div>
+        </section>
+
+        <!-- 3. MY LIBRARY TAB (Favorites & History) -->
+        <section id="libraryTab" class="tab-content hidden">
+            <h2 class="section-heading">❤️ My Favorite Stories</h2>
+            <div id="libraryGrid" class="story-grid"></div>
+        </section>
+
+        <!-- 4. TOP 100 RANKING TAB -->
+        <section id="rankingTab" class="tab-content hidden">
+            <h2 class="section-heading">🏆 Top 100 Most Played Stories</h2>
+            <p class="sub-text">Sabse jyada suni gayi kahaniyan (#1 se #100 ranking)</p>
+            <div id="rankingList" class="ranking-container"></div>
+        </section>
+
+        <!-- 5. STORY PROFILE PAGE -->
+        <section id="storyProfileView" class="tab-content hidden">
+            <button class="page-back-btn" onclick="goBackFromProfile()">⬅ Wapas Jayein</button>
+            <div id="storyProfileContent"></div>
+        </section>
+
+        <!-- 6. FULL SCREEN AUDIO PLAYER (Pocket FM Style) -->
+        <section id="fullPlayerView" class="full-player-screen hidden">
+            <div class="player-top-bar">
+                <button class="page-back-btn" onclick="minimizePlayer()">⬇ Niche Karein (Back)</button>
+                <span class="now-playing-badge">NOW PLAYING</span>
+            </div>
+
+            <div class="player-main-card">
+                <img id="fpCover" src="" alt="Cover" class="fp-cover">
+                <h2 id="fpStoryTitle">Story Title</h2>
+                <p id="fpEpisodeTitle" class="fp-ep-title">Episode 1</p>
+                <p id="fpPlayCount" class="fp-plays">🎧 0 Plays</p>
+
+                <!-- Seek Bar -->
+                <div class="seek-container">
+                    <span id="currentTimeText">00:00</span>
+                    <input type="range" id="seekBar" value="0" min="0" max="100" step="1" oninput="seekAudio()">
+                    <span id="totalTimeText">00:00</span>
+                </div>
+
+                <!-- Controls -->
+                <div class="player-controls">
+                    <button onclick="prevEpisode()" title="Previous Episode">⏮</button>
+                    <button onclick="skipSeconds(-10)" title="10s Back">⏪ 10s</button>
+                    <button id="fpPlayPauseBtn" class="main-play-btn" onclick="togglePlayPause()">▶️</button>
+                    <button onclick="skipSeconds(10)" title="10s Forward">10s ⏩</button>
+                    <button onclick="nextEpisode()" title="Next Episode">⏭</button>
+                </div>
+            </div>
+
+            <!-- Naye Story Sunne ke Suggestions -->
+            <div class="player-suggestions">
+                <h3>🔥 Aapke Liye Naye Story Suggestions</h3>
+                <div id="playerSuggestionList" class="horizontal-scroll"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= STICKY MINI PLAYER (Back karne par niche dikhega) ================= -->
+    <div id="miniPlayer" class="mini-player hidden">
+        <div class="mini-left" onclick="openFullPlayer()">
+            <img id="mpCover" src="" alt="cover">
+            <div class="mini-info">
+                <h4 id="mpStoryTitle">Story Name</h4>
+                <p id="mpEpTitle">Episode 1 • <span id="mpTime">00:00</span></p>
+            </div>
+        </div>
+        <div class="mini-controls">
+            <button id="mpPlayPauseBtn" onclick="togglePlayPause()">▶️</button>
+            <button onclick="nextEpisode()" title="Next Episode">⏭</button>
+        </div>
+    </div>
+
+    <!-- ================= BOTTOM NAVIGATION (Pocket FM Interface) ================= -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" id="nav-discover" onclick="switchTab('discover')">
+            <span class="nav-icon">🧭</span>
+            <span>Discover</span>
+        </button>
+        <button class="nav-item" id="nav-library" onclick="switchTab('library')">
+            <span class="nav-icon">📚</span>
+            <span>My Library</span>
+        </button>
+        <button class="nav-item" id="nav-ranking" onclick="switchTab('ranking')">
+            <span class="nav-icon">🏆</span>
+            <span>Top 100</span>
+        </button>
+    </nav>
+
+    <!-- ================= LOGIN MODAL ================= -->
+    <div id="loginModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>👤 Maurya FM Login</h3>
+                <button onclick="closeLoginModal()">✖</button>
+            </div>
+            <form id="loginForm" onsubmit="submitLogin(event)">
+                <label>Aapka Naam</label>
+                <input type="text" id="loginName" required placeholder="Apna pura naam likhein">
+
+                <label>Mobile Number ya Email</label>
+                <input type="text" id="loginContact" required placeholder="Mobile number ya Email ID">
+
+                <label>Password</label>
+                <input type="password" id="loginPass" required placeholder="Password banayein">
+
+                <button type="submit" class="submit-login-btn">Login Karein</button>
+            </form>
+            <p id="loginStatusMsg" class="login-msg"></p>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="mainAudio" preload="metadata"></audio>
+
+    <!-- Scripts -->
+    <script src="stories.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
